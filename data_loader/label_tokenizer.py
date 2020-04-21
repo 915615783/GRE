@@ -12,6 +12,7 @@ class LabelTokenizer():
         label_text = self.id2text[id].lower()
         label_word = label_text.split(' ')
         label_token = [self.word2id[word] if (word in self.word2id.keys()) else (self.word2id['[UNK]']) for word in label_word]
+        label_token.append(len(self.word2id))   # append [eos]
         return label_token
 
 # lt = LabelTokenizer(r'data\relid2Text.json', r'pretrain\glove\glove_word2id.json')

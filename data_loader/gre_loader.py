@@ -56,11 +56,11 @@ def collate_fn(data):
     label_len = [len(label_token) for i in label_token]
     label_token = [torch.tensor(label_token, dtype=torch.int32) for i in label_token]
 
-    word = pad_sequence(word, batch_first=True)
-    pos1 = pad_sequence(pos1, batch_first=True)
-    pos2 = pad_sequence(pos2, batch_first=True)
-    mask = pad_sequence(mask, batch_first=True)
-    label_token = pad_sequence(label_token, batch_first=True)
+    word = pad_sequence(word, batch_first=True, padding_value=400001)
+    pos1 = pad_sequence(pos1, batch_first=True, padding_value=400001)
+    pos2 = pad_sequence(pos2, batch_first=True, padding_value=400001)
+    mask = pad_sequence(mask, batch_first=True, padding_value=400001)
+    label_token = pad_sequence(label_token, batch_first=True, padding_value=400001)
 
     return word, pos1, pos2, mask, label_token, label_len
     
@@ -71,8 +71,8 @@ def get_data_loader(dataset, batch_size, num_workers=1):
     return data_loader
 
 
-d = FewRelDataset(r'data\val_wiki.json', None, None)
-# print(d.data[0])
+# d = FewRelDataset(r'data\val_wiki.json', None, None)
+# # print(d.data[0])
         
 
 

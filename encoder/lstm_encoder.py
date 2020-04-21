@@ -32,9 +32,10 @@ class LstmEncoder(nn.Module):
         emb = pack_padded_sequence(emb, mask.sum(-1), batch_first=True)
         output, (h_n, c_n) = self.encoder(emb)   # h and c: (layers*directions, batch, hidden)
 
+        output = pad_packed_sequence(output, batch_first=True)   # (b, max_l, h)
         h_n = h_n.squeeze(0) # (b, h)
         c_n = c_n.squeeze(0)
-        return h_n, c_n
+        return output, (h_n, c_n)
 
 
 
