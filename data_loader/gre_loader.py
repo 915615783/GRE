@@ -47,19 +47,19 @@ class FewRelDataset(data.Dataset):
         return 1000000000
 
 def collate_fn(data):
-    data.sort(key=lambda x:len(x[0]), reverse=True)
+    data.sort(key=lambda x:sum(x[3]), reverse=True)
     word, pos1, pos2, mask, label_token = zip(*data)
-    word = [torch.tensor(word, dtype=torch.int32) for i in word]
-    pos1 = [torch.tensor(pos1, dtype=torch.int32) for i in pos1]
-    pos2 = [torch.tensor(pos2, dtype=torch.int32) for i in pos2]
-    mask = [torch.tensor(mask, dtype=torch.int32) for i in mask]
-    label_len = [len(label_token) for i in label_token]
-    label_token = [torch.tensor(label_token, dtype=torch.int32) for i in label_token]
+    word = [torch.tensor(i, dtype=torch.int32) for i in word]
+    pos1 = [torch.tensor(i, dtype=torch.int32) for i in pos1]
+    pos2 = [torch.tensor(i, dtype=torch.int32) for i in pos2]
+    mask = [torch.tensor(i, dtype=torch.int32) for i in mask]
+    label_len = torch.tensor([len(i) for i in label_token])
+    label_token = [torch.tensor(i, dtype=torch.int32) for i in label_token]
 
     word = pad_sequence(word, batch_first=True, padding_value=400001)
     pos1 = pad_sequence(pos1, batch_first=True, padding_value=400001)
     pos2 = pad_sequence(pos2, batch_first=True, padding_value=400001)
-    mask = pad_sequence(mask, batch_first=True, padding_value=400001)
+    mask = pad_sequence(mask, batch_first=True, padding_value=0)
     label_token = pad_sequence(label_token, batch_first=True, padding_value=400001)
 
     return word, pos1, pos2, mask, label_token, label_len

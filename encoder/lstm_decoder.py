@@ -18,7 +18,7 @@ class LstmDecoder(nn.Module):
         self.sos_input = torch.tensor(np.random.randn(1, embedding_dim))
 
 
-    def forward(self, h, c, max_length, is_teacher_force=None, teacher_input=None):
+    def forward(self, h, c, max_length, is_teacher_force=False, teacher_input=None):
         '''
         这个是给定label长度，用于训练，predict需要可变长度
         h: (b, h)

@@ -19,4 +19,3 @@ class Gre(nn.Module):
         # 改了
         loss = F.nll_loss(decoder_out.view(-1, decoder_out.size(-1)), label_token.view(-1), ignore_index=400001)
         return decoder_out, loss   # (b, max_length, num_embeddings + 1)
-        
