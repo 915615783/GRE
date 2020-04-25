@@ -7,6 +7,8 @@ class LabelTokenizer():
             self.id2text = json.load(f)
         with open(word2id_path, 'r') as f:
             self.word2id = json.load(f)
+
+        self.id2word = {y:x for x, y in self.word2id.items()}
     
     def __call__(self, id):
         label_text = self.id2text[id].lower()

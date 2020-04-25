@@ -6,6 +6,8 @@ import random
 import json
 from torch.nn.utils.rnn import pad_sequence, pad_packed_sequence, pack_padded_sequence
 
+import global_var
+
 class FewRelDataset(data.Dataset):
     """
     FewRel Dataset, which provides the label text
@@ -46,21 +48,25 @@ class FewRelDataset(data.Dataset):
     def __len__(self):
         return 1000000000
 
+
 def collate_fn(data):
     data.sort(key=lambda x:sum(x[3]), reverse=True)
     word, pos1, pos2, mask, label_token = zip(*data)
-    word = [torch.tensor(i, dtype=torch.int32) for i in word]
-    pos1 = [torch.tensor(i, dtype=torch.int32) for i in pos1]
-    pos2 = [torch.tensor(i, dtype=torch.int32) for i in pos2]
-    mask = [torch.tensor(i, dtype=torch.int32) for i in mask]
-    label_len = torch.tensor([len(i) for i in label_token])
-    label_token = [torch.tensor(i, dtype=torch.int32) for i in label_token]
+    word = [torch.tensor(i, dtype=torch.long) for i in word]
+    pos1 = [torch.tensor(i, dtype=torch.long) for i in pos1]
+    pos2 = [torch.tensor(i, dtype=torch.long) for i in pos2]
+    mask = [torch.tensor(i, dtype=torch.long) for i in mask]
+    label_len = torch.tensor([len(i) for i in label_token], dtype=torch.long)
+    label_token = [torch.tensor(i, dtype=torch.long) for i in label_token]
 
-    word = pad_sequence(word, batch_first=True, padding_value=400001)
-    pos1 = pad_sequence(pos1, batch_first=True, padding_value=400001)
-    pos2 = pad_sequence(pos2, batch_first=True, padding_value=400001)
+    # print(global_var.pad_index, global_var.label_pad_index)
+    if global_var.pad_index == None or global_var.label_pad_index == None:
+        raise TypeError('global_var.pad_index or global_var.pad_index is None. Please assign them value according to the tokenizer.word2id before loading data.')
+    word = pad_sequence(word, batch_first=True, padding_value=global_var.pad_index)
+    pos1 = pad_sequence(pos1, batch_first=True, padding_value=0)
+    pos2 = pad_sequence(pos2, batch_first=True, padding_value=0)
     mask = pad_sequence(mask, batch_first=True, padding_value=0)
-    label_token = pad_sequence(label_token, batch_first=True, padding_value=400001)
+    label_token = pad_sequence(label_token, batch_first=True, padding_value=global_var.label_pad_index)
 
     return word, pos1, pos2, mask, label_token, label_len
     
